@@ -3,7 +3,7 @@ from activation_functions import heaviside_step_function
 
 class Perceptron():
     
-    def __init__(self, input_size, act_func=heaviside_step_function, epochs=100, learning_rate=0.01):
+    def __init__(self, input_size, act_func=heaviside_step_function, epochs=1000, learning_rate=0.0025):
         self.act_func = act_func
         self.epochs = epochs
         self.learning_rate = learning_rate
@@ -15,7 +15,6 @@ class Perceptron():
         u = np.dot(inputs, self.weights)
         return self.act_func(u)
         
-    
     def train(self, training_inputs, labels):
         error = True
         for e in range(self.epochs):

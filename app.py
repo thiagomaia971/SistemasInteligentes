@@ -4,15 +4,15 @@ import numpy as np
 
 from perceptron import Perceptron
 
-# Embaralhar
-# Dividar as bases em dois
-#    25%(base de teste) e 75%(base de treinamento)
+# ✔️ Embaralhar
+# ✔️ Dividar as bases em dois
+#    ✔️ 25%(base de teste) e 75%(base de treinamento)
 
-# Rodar 5 treinamentos para os dois alg
-# taxa de aprendizado (n) = 2,5*10^-3
-# epocas < 1000
-# precisão de 10^-6
-# usar (base de treinamento)
+# ✔️ Rodar 5 treinamentos para os dois alg
+# ✔️ taxa de aprendizado (n) = 2,5*10^-3
+# ✔️ epocas < 1000
+# precisão de 10^-6 (adaline)
+# ✔️ usar (base de treinamento)
 
 # Excel:
 # Valores iniciais do vetor de peso (antes do treinamento)
@@ -65,14 +65,11 @@ baseTeste = pegarBaseTeste(base)
 inputTreinamento = pegarInputTreinamento(baseTreinamento)
 outputTreinamento = pegarOutputTreinamento(baseTreinamento)
 
-perceptron = Perceptron(len(inputTreinamento[0]), epochs=10000)
+perceptron = Perceptron(len(inputTreinamento[0]))
 
 for e in range(5):
-    perceptron
-# resultados = X.iloc[:, 60:].values
-
-
-
+    perceptron.train(inputTreinamento, outputTreinamento)
+    
 
 #plt.xlim(-1,3)
 #plt.ylim(-1,3)
