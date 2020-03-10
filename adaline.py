@@ -16,7 +16,14 @@ class Adaline():
         u = np.dot(inputs, self.weights)
         return self.act_func(u)
         
+    # n = learning_rate
+    # y = output model
+    # o = desired output
+    # w = w + n (o-y)x
+    # E = (o-y)²
     
+    # x^K = conjuto de amostra = training_inputs
+    # d^K = saída desejada = 
     def train(self, training_inputs, labels):
         error = True
         for e in range(self.epochs):

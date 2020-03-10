@@ -1,14 +1,78 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+import numpy as np
 
 from perceptron import Perceptron
 
-dataset = pd.read_csv('databases/iris.data')
-dataset.replace(['Iris-setosa', 'Iris-versicolor', 'Iris-virginica'], [1, 0, 0], inplace=True)
-X = dataset.iloc[:, 0:4].values
-d = dataset.iloc[:, 4:].values
+# Embaralhar
+# Dividar as bases em dois
+#    25%(base de teste) e 75%(base de treinamento)
 
-p = Perceptron(len(X[0]), epochs=10000)
+# Rodar 5 treinamentos para os dois alg
+# taxa de aprendizado (n) = 2,5*10^-3
+# epocas < 1000
+# precisão de 10^-6
+# usar (base de treinamento)
+
+# Excel:
+# Valores iniciais do vetor de peso (antes do treinamento)
+# Valores finais do vetor de peso (após do treinamento)
+# E a quantidade de épocas
+# Duas tabelas, uma para cada alg.
+
+# Para o Adaline, deixa pro ultimo
+
+def pegarBase():
+    dataset = pd.read_csv('databases/Perceptron - rocks and mines/sonar.all-data')
+    dataset.replace(['M', 'R'], [1, 0], inplace=True)
+    return dataset.iloc[:, 0:61].values
+    
+def embaralhar(base):
+    np.random.shuffle(base)
+
+def pegarBaseTreinamento(base):
+    l = int(0.75*len(base))
+    treinamento = [None]*l
+    for e in range(l):
+        treinamento[e] = base[e]
+    return treinamento
+
+def pegarBaseTeste(base):
+    l = int(0.25*len(base))
+    teste = [None]*l
+    baseReversed = list(reversed(base))
+    for e in range(l):
+        teste[e] = baseReversed[e]
+    return teste
+
+def pegarInputTreinamento(baseTreinamento):
+    inputTreinamento = [None]*len(baseTreinamento)
+    for e in range(len(baseTreinamento)):
+        inputTreinamento[e] = baseTreinamento[e][0:60]
+    return inputTreinamento
+
+def pegarOutputTreinamento(baseTreinamento):
+    outputTreinamento = [None]*len(baseTreinamento)
+    for e in range(len(baseTreinamento)):
+        outputTreinamento[e] = baseTreinamento[e][60:]
+    return outputTreinamento
+
+base = pegarBase()
+embaralhar(base)
+baseTreinamento = pegarBaseTreinamento(base)
+baseTeste = pegarBaseTeste(base)
+
+inputTreinamento = pegarInputTreinamento(baseTreinamento)
+outputTreinamento = pegarOutputTreinamento(baseTreinamento)
+
+perceptron = Perceptron(len(inputTreinamento[0]), epochs=10000)
+
+for e in range(5):
+    perceptron
+# resultados = X.iloc[:, 60:].values
+
+
+
 
 #plt.xlim(-1,3)
 #plt.ylim(-1,3)
@@ -24,7 +88,7 @@ p = Perceptron(len(X[0]), epochs=10000)
 #plt.plot(xH, yH, 'y-')
 
 
-p.train(X, d)
+#p.train(X, d)
 
 
 #print(p.predict(X[0]))
