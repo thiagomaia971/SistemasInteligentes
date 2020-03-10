@@ -65,9 +65,9 @@ baseTeste = pegarBaseTeste(base)
 inputTreinamento = pegarInputTreinamento(baseTreinamento)
 outputTreinamento = pegarOutputTreinamento(baseTreinamento)
 
-perceptron = Perceptron(len(inputTreinamento[0]))
-
 for e in range(5):
+    print(f">> Treinamento {e + 1}")
+    perceptron = Perceptron(len(inputTreinamento[0]))
     perceptron.train(inputTreinamento, outputTreinamento)
     
 
