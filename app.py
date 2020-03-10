@@ -1,8 +1,9 @@
-import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 
 from perceptron import Perceptron
+# from adaline import Adaline
 
 # ✔️ Embaralhar
 # ✔️ Dividar as bases em dois
@@ -57,6 +58,24 @@ def pegarOutputTreinamento(baseTreinamento):
         outputTreinamento[e] = baseTreinamento[e][60:]
     return outputTreinamento
 
+def rodarPerceptron(inputTreinamento, outputTreinamento):
+    print(">> Perceptron")
+    for e in range(5):
+        print(f">> Treinamento {e + 1}")
+        perceptron = Perceptron(len(inputTreinamento[0]))
+        perceptron.train(inputTreinamento, outputTreinamento)
+        print("")
+    print("")
+    print("")
+
+# def rodarAdaline(inputTreinamento, outputTreinamento):
+#     print(">> Adaline")
+#     for e in range(5):
+#         print(f">> Treinamento {e + 1}")
+#         perceptron = Adaline(len(inputTreinamento[0]))
+#         perceptron.train(inputTreinamento, outputTreinamento)
+#         print("")
+
 base = pegarBase()
 embaralhar(base)
 baseTreinamento = pegarBaseTreinamento(base)
@@ -65,10 +84,8 @@ baseTeste = pegarBaseTeste(base)
 inputTreinamento = pegarInputTreinamento(baseTreinamento)
 outputTreinamento = pegarOutputTreinamento(baseTreinamento)
 
-for e in range(5):
-    print(f">> Treinamento {e + 1}")
-    perceptron = Perceptron(len(inputTreinamento[0]))
-    perceptron.train(inputTreinamento, outputTreinamento)
+rodarPerceptron(inputTreinamento, outputTreinamento)
+#rodarAdaline(inputTreinamento, outputTreinamento)
     
 
 #plt.xlim(-1,3)

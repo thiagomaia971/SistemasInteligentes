@@ -1,9 +1,10 @@
 import numpy as np
 from activation_functions import heaviside_step_function
+import math as math
 
 class Adaline():
     
-    def __init__(self, input_size, act_func=heaviside_step_function, epochs=100, learning_rate=0.01, precision=1):
+    def __init__(self, input_size, act_func=heaviside_step_function, epochs=1000, learning_rate=0.0025, precision=0.000001):
         self.act_func = act_func
         self.epochs = epochs
         self.learning_rate = learning_rate
@@ -14,7 +15,8 @@ class Adaline():
     def predict(self, inputs):
         inputs = np.append(-1, inputs)
         u = np.dot(inputs, self.weights)
-        return self.act_func(u)
+        return u
+        # return self.act_func(u)
         
     # n = learning_rate
     # y = output model
@@ -26,30 +28,26 @@ class Adaline():
     # d^K = saída desejada = 
     def train(self, training_inputs, labels):
         error = True
-        for e in range(self.epochs):
-            error = False
-            print(f'>>> Start epoch {e + 1}')
-            print(f'Actual weights {self.weights}')
-            eqmAnterior = self.precision + 1
-            eqmAtual = 0
+        epochs = 0
 
-            while(eqmAnterior - eqmAtual <= self.precision)
+        eqm = 0
+        eqmAnterior = 0
+        eqmAtual = 0
+        while(error == True or epochs < self.epochs):
+            eqmAnterior = eqm/len(training_inputs)
+            for inputs, label in zip(training_inputs, labels):
+                u = self.predict(inputs)
+                self.weights = self.weights + self.learning_rate*(label-u)*inputs
+                eqm += self.EQM(label, u)
+
+            epochs = epochs + 1
+            eqmAtual = eqm
+            if (eqmAnterior - eqmAtual <= self.precision):
+                error = False
                 
-
-            # for inputs, label in zip(training_inputs, labels):
-            #     print(f'Input {inputs}')
-            #     predicton = self.predict(inputs)
-            #     if predicton != label:
-            #         print(f'Expected {label}, got {predicton}. Start trainning!')
-            #         inputs = np.append(-1, inputs)
-            #         self.weights = self.weights + self.learning_rate * (label - predicton) * inputs
-            #         print(f'New weights {self.weights}')
-            #         error = True
-            #         break
-            #     else:
-            #         print(f'Everything is OK!')
+            print(f"epochs: {epochs}")
+            print(f"eqmAnterior: {eqmAnterior}")
+            print(f"eqmAtual: {eqmAtual}")
             
-            print('')
-            if not error:
-                break
-            
+    def EQM(self, label, u): 
+        return math.pow(label-u, 2)
