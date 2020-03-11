@@ -13,7 +13,6 @@ class Adaline():
         
     
     def predict(self, inputs):
-        inputs = np.append(-1, inputs)
         u = np.dot(inputs, self.weights)
         return u
         # return self.act_func(u)
@@ -36,8 +35,9 @@ class Adaline():
         while(error == True or epochs < self.epochs):
             eqmAnterior = eqm/len(training_inputs)
             for inputs, label in zip(training_inputs, labels):
+                inputs = np.append(-1, inputs)
                 u = self.predict(inputs)
-                self.weights = self.weights + self.learning_rate*(label-u)*inputs
+                self.weights = self.weights + self.learning_rate* label - u * inputs
                 eqm += self.EQM(label, u)
 
             epochs = epochs + 1
