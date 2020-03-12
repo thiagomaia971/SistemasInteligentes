@@ -67,6 +67,11 @@ def testar(resultados, ehPerceptron):
         alg = resultados[e]
         log.print(f'>>Teste {e + 1}')
         hits = 0
+        
+        tp = 0
+        fp = 0
+        tn = 0
+        fn = 0
         for inputs, label in zip(inputTeste, outputTeste):
             predict = alg.predict(inputs)
             if not ehPerceptron:
@@ -74,11 +79,23 @@ def testar(resultados, ehPerceptron):
 
             if predict == label:
                 hits += 1
+            
+            if label == 1 and predict == label:
+                tp += 1
+            if label == 1 and predict != label:
+                fp += 1
+
+            if label == -1 and predict == label:
+                tn += 1
+            if label == -1 and predict != label:
+                fn += 1
 
         log.print(f'Total: {len(inputTeste)}')
         log.print(f'Hits: {hits}')
         log.print(f'Misses: {len(inputTeste)-hits}')
-        log.print(f'Precision: {(hits/len(inputTeste)) * 100}%\n')
+        log.print(f'Precision: {(hits/len(inputTeste)) * 100}%')
+        log.print(f'Matriz: [{tp},{fp}][{tn},{fn}]\n')
+
 
 def rodarPerceptron(inputTreinamento, outputTreinamento):
     log.print(">> Perceptron")
