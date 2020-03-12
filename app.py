@@ -7,24 +7,6 @@ from adaline import Adaline
 from log import Log
 from activation_functions import signum_function
 
-# ✔️ Embaralhar
-# ✔️ Dividar as bases em dois
-#    ✔️ 25%(base de teste) e 75%(base de treinamento)
-
-# ✔️ Rodar 5 treinamentos para os dois alg
-# ✔️ taxa de aprendizado (n) = 2,5*10^-3
-# ✔️ epocas < 1000
-# precisão de 10^-6 (adaline)
-# ✔️ usar (base de treinamento)
-
-# Excel:
-# Valores iniciais do vetor de peso (antes do treinamento)
-# Valores finais do vetor de peso (após do treinamento)
-# E a quantidade de épocas
-# Duas tabelas, uma para cada alg.
-
-# Para o Adaline, deixa pro ultimo
-
 log = Log()
 
 def pegarBase():
@@ -80,13 +62,16 @@ def testar(resultados, ehPerceptron):
             if predict == label:
                 hits += 1
             
+            # true positive
             if label == 1 and predict == label:
                 tp += 1
+            # false positive
             if label == 1 and predict != label:
                 fp += 1
-
+            # true negative
             if label == -1 and predict == label:
                 tn += 1
+            # false negative
             if label == -1 and predict != label:
                 fn += 1
 
@@ -114,7 +99,7 @@ def rodarAdaline(inputTreinamento, outputTreinamento):
     for e in range(5):
         log.print(f">> Treinamento {e + 1}")
         adaline = Adaline(log, len(inputTreinamento[0]))
-        adaline.train(inputTreinamento, outputTreinamento)
+        adaline.train(inputTreinamento, outputTreinamento, e + 1)
         adalines[e] = adaline
     testar(adalines, False)
 
@@ -134,40 +119,4 @@ outputTeste = pegarOutputTreinamento(baseTeste)
 
 rodarPerceptron(inputTreinamento, outputTreinamento)
 rodarAdaline(inputTreinamento, outputTreinamento)
-    
-
-#plt.xlim(-1,3)
-#plt.ylim(-1,3)
-#for i in range(len(d)):
-#    if d[i] == 1:
-#        plt.plot(X[i, 0], X[i, 1], 'ro')
-#    else:
-#        plt.plot(X[i, 0], X[i, 1], 'bo')
-#        
-#f = lambda x: (p.weights[0]/p.weights[2]) - (p.weights[1]/p.weights[2] * x)
-#xH = list(range(-1,3))
-#yH = list(map(f, xH))
-#plt.plot(xH, yH, 'y-')
-
-
-#p.train(X, d)
-
-
-#log.print(p.predict(X[0]))
-#log.print(p.predict(X[1]))
-#log.print(p.predict(X[2]))
-#log.print(p.predict(X[3]))
-#
-#plt.xlim(-1,3)
-#plt.ylim(-1,3)
-#for i in range(len(d)):
-#    if d[i] == 1:
-#        plt.plot(X[i, 0], X[i, 1], 'ro')
-#    else:
-#        plt.plot(X[i, 0], X[i, 1], 'bo')
-#        
-#f = lambda x: (p.weights[0]/p.weights[2]) - (p.weights[1]/p.weights[2] * x)
-#xH = list(range(-1,3))
-#yH = list(map(f, xH))
-#plt.plot(xH, yH, 'g-')
     

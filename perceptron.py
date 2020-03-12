@@ -31,12 +31,11 @@ class Perceptron():
                 predicton = self.predict(inputs)
                 if predicton != label:
                     inputs = np.append(-1, inputs)
-                    self.weights = self.weights + self.learning_rate * (label - predicton) * inputs
+                    self.weights += self.learning_rate * (label - predicton) * inputs
                     error = True
                     break
             
             if not error:
-                self.log.print(f'Final epoch: {e + 1}')
                 break
 
         self.log.printWeights(f'>>>>> Final weights', self.weights)
