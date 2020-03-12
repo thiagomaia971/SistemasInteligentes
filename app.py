@@ -4,6 +4,8 @@ import pandas as pd
 
 from perceptron import Perceptron
 from adaline import Adaline
+from log import Log
+from activation_functions import signum_function
 
 # ✔️ Embaralhar
 # ✔️ Dividar as bases em dois
@@ -23,9 +25,11 @@ from adaline import Adaline
 
 # Para o Adaline, deixa pro ultimo
 
+log = Log()
+
 def pegarBase():
     dataset = pd.read_csv('databases/Perceptron - rocks and mines/sonar.all-data')
-    dataset.replace(['M', 'R'], [1, 0], inplace=True)
+    dataset.replace(['M', 'R'], [-1, 1], inplace=True)
     return dataset.iloc[:, 0:61].values
     
 def embaralhar(base):
@@ -57,34 +61,61 @@ def pegarOutputTreinamento(baseTreinamento):
     for e in range(len(baseTreinamento)):
         outputTreinamento[e] = baseTreinamento[e][60:]
     return outputTreinamento
+    
+def testar(resultados, ehPerceptron):
+    for e in range(5):
+        alg = resultados[e]
+        log.print(f'>>Teste {e + 1}')
+        hits = 0
+        for inputs, label in zip(inputTeste, outputTeste):
+            predict = alg.predict(inputs)
+            if not ehPerceptron:
+                predict = signum_function(predict)
+
+            if predict == label:
+                hits += 1
+
+        log.print(f'Total: {len(inputTeste)}')
+        log.print(f'Hits: {hits}')
+        log.print(f'Misses: {len(inputTeste)-hits}')
+        log.print(f'Precision: {(hits/len(inputTeste)) * 100}%\n')
 
 def rodarPerceptron(inputTreinamento, outputTreinamento):
-    print(">> Perceptron")
+    log.print(">> Perceptron")
+    perceptrons = [None]*5
     for e in range(5):
-        print(f">> Treinamento {e + 1}")
-        perceptron = Perceptron(len(inputTreinamento[0]))
+        log.print(f">> Treinamento {e + 1}")
+        perceptron = Perceptron(log, len(inputTreinamento[0]))
         perceptron.train(inputTreinamento, outputTreinamento)
-        print("")
-    print("")
-    print("")
+        log.print("")
+        perceptrons[e] = perceptron
+    testar(perceptrons, True)
 
 def rodarAdaline(inputTreinamento, outputTreinamento):
-    print(">> Adaline")
+    log.print(">> Adaline")
+    adalines = [None]*5
     for e in range(5):
-        print(f">> Treinamento {e + 1}")
-        perceptron = Adaline(len(inputTreinamento[0]))
-        perceptron.train(inputTreinamento, outputTreinamento)
-        print("")
+        log.print(f">> Treinamento {e + 1}")
+        adaline = Adaline(log, len(inputTreinamento[0]))
+        adaline.train(inputTreinamento, outputTreinamento)
+        adalines[e] = adaline
+    testar(adalines, False)
 
 base = pegarBase()
 embaralhar(base)
 baseTreinamento = pegarBaseTreinamento(base)
 baseTeste = pegarBaseTeste(base)
 
+log.print(baseTreinamento)
+log.print("")
+
 inputTreinamento = pegarInputTreinamento(baseTreinamento)
 outputTreinamento = pegarOutputTreinamento(baseTreinamento)
 
-# rodarPerceptron(inputTreinamento, outputTreinamento)
+inputTeste = pegarInputTreinamento(baseTeste)
+outputTeste = pegarOutputTreinamento(baseTeste)
+
+rodarPerceptron(inputTreinamento, outputTreinamento)
 rodarAdaline(inputTreinamento, outputTreinamento)
     
 
@@ -105,10 +136,10 @@ rodarAdaline(inputTreinamento, outputTreinamento)
 #p.train(X, d)
 
 
-#print(p.predict(X[0]))
-#print(p.predict(X[1]))
-#print(p.predict(X[2]))
-#print(p.predict(X[3]))
+#log.print(p.predict(X[0]))
+#log.print(p.predict(X[1]))
+#log.print(p.predict(X[2]))
+#log.print(p.predict(X[3]))
 #
 #plt.xlim(-1,3)
 #plt.ylim(-1,3)

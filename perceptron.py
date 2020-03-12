@@ -1,9 +1,11 @@
 import numpy as np
-from activation_functions import heaviside_step_function
+from activation_functions import signum_function
+from log import Log
 
 class Perceptron():
     
-    def __init__(self, input_size, act_func=heaviside_step_function, epochs=1000, learning_rate=0.0025):
+    def __init__(self, log, input_size, act_func=signum_function, epochs=1000, learning_rate=0.0025):
+        self.log = log
         self.act_func = act_func
         self.epochs = epochs
         self.learning_rate = learning_rate
@@ -17,7 +19,8 @@ class Perceptron():
         
     def train(self, training_inputs, labels):
         error = True
-        print(f'Initial weights {self.weights}')
+        self.log.printWeights(f'>>>>> Initial weights', self.weights)
+
         finalEpochs = 0
 
         for e in range(self.epochs):
@@ -33,9 +36,11 @@ class Perceptron():
                     break
             
             if not error:
-                print(f'Final epoch: {e + 1}')
+                self.log.print(f'Final epoch: {e + 1}')
                 break
 
-        print(f'Final epoch: {finalEpochs + 1}')
-        print(f'Final weights {self.weights}')
-            
+        self.log.printWeights(f'>>>>> Final weights', self.weights)
+        self.log.print(f'Final epoch: {finalEpochs + 1}\n')
+
+        self.log.print('')
+        self.log.print('')
