@@ -16,8 +16,9 @@ class MLP():
         self.iniciandoBias()
         
     def inicializarPesos(self):
-        self.pesosEntradas = np.random.rand(self.camadaIntermediaria, self.inputSize) #weight1
+        self.pesosEntradas = np.random.rand(self.camadaIntermediaria, self.inputSize + 1) #weight1
         self.pesosSaidas = np.random.rand(self.outputSize, self.camadaIntermediaria)  #weight2
+        
         
     def iniciandoBias(self):
         self.biasEntradas = np.zeros([self.camadaIntermediaria,1]) #bias1
@@ -32,27 +33,18 @@ class MLP():
         novoBias1 = 0; novoBias2 = 0
         
         while (currentEpoca <= self.epocas and abs(eqm - erroAnterior) > self.precision):
-            #for j in range(0, len(training_inputs), self.tamanhoLote):
-            #    loteTreinamento = training_inputs[j, j+ self.tamanhoLote]
-                
             gradientSum_w1 = 0; gradientSum_w2 = 0
             gradientSum_b1 = 0; gradientSum_b2 = 0
                 
             for x,y in zip(training_inputs, outputs):
-                # Forward
-                # First Hidden Layer
-                inj1 = np.dot(self.pesosEntradas,x)+self.biasEntradas
-                aj1 = self.actfunc(inj1)
-                # Output Layer
-                inj2 = np.dot(self.pesosSaidas,x)+self.biasSaida
-                aj2 = self.actfunc(inj2)
+                self.forward(x)
                 
                 # Backforward
-                d_aj2 = aj2 - y
-                d_weight2 = np.dot(d_aj2,aj1.T)
+                self.matrizError = self.matrizResposta - y
+                d_weight2 = np.dot(np.asmatrix(self.matrizError).T, np.asmatrix(self.matrizIntermediaria))
                 d_bias2 = d_aj2
                 
-                daj1 = np.dot(self.pesosSaidas.T, d_aj2)*self.actfunc(inj1)
+                daj1 = np.dot(self.pesosSaidas.T, d_aj2)*self.actfunc(matrizIntermediaria)
                 d_weight1 = np.dot(daj1,x.T)
                 d_bias1 = daj1
                 
@@ -67,6 +59,18 @@ class MLP():
             
             self.biasEntradas += novoBias1; self.biasSaida += novoBias2
             self.pesosEntradas += novoPeso1; self.pesosSaidas += novoPeso2
+
+    def forward(self, x): 
+        x = np.append(-1, x)
+        
+        self.matrizIntermediaria = np.dot(self.pesosEntradas,x) #+self.biasEntradas
+        for i in range(len(self.matrizIntermediaria)):    
+            self.matrizIntermediaria[i] = self.actfunc(self.matrizIntermediaria[i])
+            
+        # Output Layer
+        self.matrizResposta = np.dot(self.pesosSaidas, self.matrizIntermediaria) #+self.biasSaida
+        for i in range(len(self.matrizResposta)):
+            self.matrizResposta[i] = self.actfunc(self.matrizResposta[i])
             
     #def prediction(self, inputSize):
         
