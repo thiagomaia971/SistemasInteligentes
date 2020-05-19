@@ -45,5 +45,7 @@ inputExecution = pegarInput(base)
 outPutExecution = pegarOutPut(base) 
 
 mlp = MLP(len(inputExecution[0]), len(outPutExecution[0]))
+#for i in range(5):
 mlp.train(inputExecution, outPutExecution)
+    
 mlp.predict(pegarInput(testeBase), pegarOutPut(testeBase))
