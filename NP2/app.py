@@ -1,8 +1,8 @@
 import pandas as pd
 from MLP import MLP
 
-def pegarBase():
-    dataset = pd.read_csv('databases/teste.csv')
+def pegarBase(baseDeDados):
+    dataset = pd.read_csv(baseDeDados)
     
     linhasFinais = []
     linhas = dataset.iloc[:, 0:33].values
@@ -38,11 +38,12 @@ def pegarOutPut(base):
 
     return outPutBase    
 
-base = pegarBase()
+base = pegarBase('databases/trein.csv')
+testeBase = pegarBase('databases/teste.csv')
 
 inputExecution = pegarInput(base)
 outPutExecution = pegarOutPut(base) 
 
 mlp = MLP(len(inputExecution[0]), len(outPutExecution[0]))
 mlp.train(inputExecution, outPutExecution)
-print("oi")
+mlp.predict(pegarInput(testeBase), pegarOutPut(testeBase))

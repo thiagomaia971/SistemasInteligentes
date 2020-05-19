@@ -1,8 +1,10 @@
 import numpy as np
 from activation_functions import sigmoid_function
+from activation_functions import arredondar
+import math 
 
 class MLP():
-    def __init__(self, inputSize, outputSize, actfunc=sigmoid_function, precision=0.000001, learningRate=0.1, camadaIntermediaria = 15, epocas = 148, tamanhoLote = 19):
+    def __init__(self, inputSize, outputSize, actfunc=sigmoid_function, precision=0.0000001, learningRate=0.01, camadaIntermediaria = 15, epocas = 1000):
         self.camadaIntermediaria = camadaIntermediaria
         self.inputSize = inputSize
         self.outputSize = outputSize
@@ -10,70 +12,88 @@ class MLP():
         self.precision = precision
         self.learningRate = learningRate
         self.epocas = epocas
-        self.tamanhoLote = tamanhoLote
         
         self.inicializarPesos()
-        self.iniciandoBias()
         
     def inicializarPesos(self):
-        self.pesosEntradas = np.random.rand(self.camadaIntermediaria, self.inputSize + 1) #weight1
-        self.pesosSaidas = np.random.rand(self.outputSize, self.camadaIntermediaria)  #weight2
-        
-        
-    def iniciandoBias(self):
-        self.biasEntradas = np.zeros([self.camadaIntermediaria,1]) #bias1
-        self.biasSaida = np.zeros([self.outputSize,1])             #bias1
+        self.pesosEntradas = np.random.random((self.camadaIntermediaria, self.inputSize))
+        self.pesosSaidas = np.random.random((self.outputSize, self.camadaIntermediaria))
         
     def train(self, training_inputs, outputs):
+        eqmAnterior = 0.0
+        eqmAtual = 1.0
+        
         currentEpoca = 0
-        eqm = 0
-        erroAnterior = 1000
+        eqm = float(abs(eqmAtual-eqmAnterior))
         
-        novoPeso1 = 0; novoPeso2 = 0
-        novoBias1 = 0; novoBias2 = 0
-        
-        while (currentEpoca <= self.epocas and abs(eqm - erroAnterior) > self.precision):
-            gradientSum_w1 = 0; gradientSum_w2 = 0
-            gradientSum_b1 = 0; gradientSum_b2 = 0
-                
+        while (currentEpoca <= self.epocas and eqm > self.precision):
+            currentEpoca = currentEpoca + 1
+            
+            eqmAnterior = eqmAtual
+            eqmAtual = 0.0
+            
             for x,y in zip(training_inputs, outputs):
-                self.forward(x)
+                prediction = self.forward(x)
+                erros = self.error(x, y, prediction)
+                eqmAtual += float(sum(erros))
+                self.backward(prediction, x, y)
                 
-                # Backforward
-                self.matrizError = self.matrizResposta - y
-                d_weight2 = np.dot(np.asmatrix(self.matrizError).T, np.asmatrix(self.matrizIntermediaria))
-                d_bias2 = d_aj2
-                
-                daj1 = np.dot(self.pesosSaidas.T, d_aj2)*self.actfunc(matrizIntermediaria)
-                d_weight1 = np.dot(daj1,x.T)
-                d_bias1 = daj1
-                
-                # Accumulate Gradients
-                gradientSum_b1 += d_bias1; gradientSum_b2 += d_bias2
-                gradientSum_w1 += d_weight1; gradientSum_w2 += d_weight2
-                
-            novoPeso1 = novoPeso1 - (self.learningRate* gradientSum_w1)
-            novoPeso2 = novoPeso2 - (self.learningRate*gradientSum_w2)
-            novoBias1 = novoBias1 - (self.learningRate*gradientSum_b1)
-            novoBias2 = novoBias2 - (self.learningRate*gradientSum_b2)
+            eqmAtual = float(eqmAtual/len(training_inputs))
+            eqm = float(abs(eqmAtual-eqmAnterior))
             
-            self.biasEntradas += novoBias1; self.biasSaida += novoBias2
-            self.pesosEntradas += novoPeso1; self.pesosSaidas += novoPeso2
+        print(f'epocas: ', currentEpoca)
+        print(f'eqm: ',eqm)
+            
+    def predict(self, training_inputs, outputs):
+        for x,y in zip(training_inputs, outputs):
+                prediction = self.forward(x)
+                predictionArredondado = np.array(prediction)
+                
+                for i in range(len(prediction)):
+                    predictionArredondado[i] = arredondar(float(prediction[i]))
+                    
+                if (predictionArredondado == np.array([1,0,0])).all():
+                    tipo ="Tipo A"
+                    
+                elif (predictionArredondado == np.array([0,1,0])).all():
+                    tipo ="Tipo B"
+                
+                elif (predictionArredondado == np.array([0,0,1])).all():
+                    tipo ="Tipo C"
+                    
+                else:
+                    tipo ="Nenhum dos tipos"
+                    
+                print(f'', y, prediction, predictionArredondado, tipo)
+                
 
-    def forward(self, x): 
-        x = np.append(-1, x)
-        
-        self.matrizIntermediaria = np.dot(self.pesosEntradas,x) #+self.biasEntradas
-        for i in range(len(self.matrizIntermediaria)):    
-            self.matrizIntermediaria[i] = self.actfunc(self.matrizIntermediaria[i])
+    def forward(self, x):
+        result1 = np.dot(self.pesosEntradas, x)
+        self.intermediateResult = result1
+        # self.intermediateResult = self.actfunc(result1)
+        result3 = np.dot(self.intermediateResult, self.pesosSaidas.T)
+        result4 = self.actfunc(result3)
+        return result4
+    
+    def error(self, x, y, prediction):
+        result1 = prediction - y
+        for i in range(len(result1)):
+            result1[i] = math.pow(result1[i], 2)
             
-        # Output Layer
-        self.matrizResposta = np.dot(self.pesosSaidas, self.matrizIntermediaria) #+self.biasSaida
-        for i in range(len(self.matrizResposta)):
-            self.matrizResposta[i] = self.actfunc(self.matrizResposta[i])
+        return result1
             
-    #def prediction(self, inputSize):
+    def backward(self, prediction, x, y):
+        delta = prediction - y
+        result1 = np.asmatrix(self.learningRate * delta).transpose()
+        
+        result2 = result1.dot(np.asmatrix(self.intermediateResult)).tolist()
+        novoPesosSaidas = self.pesosSaidas - result2
+        
+        result3 = np.dot(result1, np.asmatrix(x))
+        result4 = np.dot(self.pesosSaidas.T, result3)
+        novoPesosEntradas = self.pesosEntradas - result4
+        
+        self.pesosEntradas = np.array(novoPesosEntradas)
+        self.pesosSaidas = np.array(novoPesosSaidas)
         
             
-                
-        
