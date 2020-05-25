@@ -1,42 +1,16 @@
 import pandas as pd
 from MLP import MLP
+import matplotlib.pyplot as plt
 
 def pegarBase(baseDeDados):
     dataset = pd.read_csv(baseDeDados)
-    
-    linhasFinais = []
-    linhas = dataset.iloc[:, 0:33].values
-    for linha in linhas:
-        novaLinha = []
-        for x in range(7):
-            novaLinha.append(linha[x])
-            
-        linhasFinais.append(novaLinha)
-        
+    return dataset
 
-    return linhasFinais
+def pegarInput(dataset):
+    return dataset.iloc[:, 0:4].values
 
-def pegarInput(base):
-    inputBase = []
-    for dado in base:
-        vectorAux = []
-        for x in range(4):
-            vectorAux.append(dado[x])
-
-        inputBase.append(vectorAux)
-
-    return inputBase
-
-def pegarOutPut(base):
-    outPutBase = []
-    for dado in base:
-        vectorAux = []
-        for x in range(3):
-            vectorAux.append(dado[4+x])
-
-        outPutBase.append(vectorAux)
-
-    return outPutBase    
+def pegarOutPut(dataset):
+    return dataset.iloc[:, 4:7].values
 
 base = pegarBase('databases/trein.csv')
 testeBase = pegarBase('databases/teste.csv')
@@ -45,7 +19,6 @@ inputExecution = pegarInput(base)
 outPutExecution = pegarOutPut(base) 
 
 mlp = MLP(len(inputExecution[0]), len(outPutExecution[0]))
-#for i in range(5):
 mlp.train(inputExecution, outPutExecution)
     
 mlp.predict(pegarInput(testeBase), pegarOutPut(testeBase))
