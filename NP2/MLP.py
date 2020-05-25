@@ -5,7 +5,7 @@ import math
 import matplotlib.pyplot as plt
 
 class MLP():
-    def __init__(self, inputSize, outputSize, actfunc=sigmoid_function, precision=0.000001, learningRate=0.001, camadaIntermediaria = 15, epocas = 100):
+    def __init__(self, inputSize, outputSize, actfunc=sigmoid_function, precision=0.000001, learningRate=0.001, camadaIntermediaria = 15, epocas = 1000):
         self.camadaIntermediaria = camadaIntermediaria
         self.inputSize = inputSize
         self.outputSize = outputSize
@@ -27,17 +27,13 @@ class MLP():
         
     def train(self, training_inputs, outputs):
         figure = plt.figure(figsize=(13, 6))
-        eqmAnterior = 1000.0
         eqmAtual = 0.0
         
         currentEpoca = 0
-        eqm = float(abs(eqmAtual-eqmAnterior))
         eqmHistory = []
         
-        while (currentEpoca < self.epocas):# and eqm > self.precision):
+        while (currentEpoca < self.epocas):
             eqmLocal = list()
-            
-            eqmAtual = 0
             
             for x,y in zip(training_inputs, outputs):
                 x = np.append(-1, x)
@@ -47,7 +43,9 @@ class MLP():
                 
             eqmHistory.append(sum(eqmLocal)/len(training_inputs))
             currentEpoca = currentEpoca + 1
-                
+            
+            #if (eqmHistory[currentEpoca - 1] < self.precision):
+            #    break
             print(f'Epoca atual: {currentEpoca} | EQM atual: {eqmHistory[currentEpoca - 1]}')
         
         subplot = figure.add_subplot(111)
@@ -129,7 +127,7 @@ class MLP():
                 acertos = acertos + 1
                 acertou = True
                 
-            print(f'{y} | {prediction} | {predictionArredondado} | {tipo} | {acertou}')
+            print(f'{x} -> {y} | {prediction} | {predictionArredondado} | {tipo} | {acertou}')
         
         print(f'Acertos: {acertos}/{len(training_inputs)}')
     
